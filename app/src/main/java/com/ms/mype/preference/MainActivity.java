@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int QR_SCAN_REQUEST_CODE = 100;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 200;
-
     private static final String PREFS_NAME = "MyListPrefs";
     private static final String KEY_ITEMS = "Items";
 
