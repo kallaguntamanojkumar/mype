@@ -37,7 +37,7 @@ public class LoginPageActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_loginpage);
+        setContentView(R.layout.login_activity_loginpage);
 
 
         textView = findViewById(R.id.textView);
