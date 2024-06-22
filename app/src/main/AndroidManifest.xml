@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <!-- Queries for UPI apps -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="upi" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -18,7 +35,6 @@
             android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -32,6 +48,22 @@
             android:exported="true"
             android:theme="@style/Theme.AppCompat">
         </activity>
+        <activity
+            android:name=".qrscanning.QRScanActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat">
+        </activity>
+        <activity
+            android:name=".qrscanning.QRResultActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat">
+        </activity>
+        <activity
+            android:name=".qrscanning.AmountEntryActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat">
+        </activity>
+
     </application>
 
 </manifest>

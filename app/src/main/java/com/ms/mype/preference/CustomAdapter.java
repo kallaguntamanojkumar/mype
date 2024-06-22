@@ -60,9 +60,9 @@ public class CustomAdapter extends BaseAdapter {
         holder.buttonItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, com.ms.mype.qrscanning.DetailActivity.class);
+                Intent intent = new Intent(context, com.ms.mype.qrscanning.QRScanActivity.class);
                 intent.putExtra("item_text", items.get(position));
-                context.startActivity(intent);
+                ((MainActivity) context).startActivityForResult(intent, com.ms.mype.preference.MainActivity.QR_SCAN_REQUEST_CODE);
             }
         });
 
