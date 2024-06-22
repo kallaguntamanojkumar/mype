@@ -13,7 +13,7 @@
         android:theme="@style/Theme.AppCompat"
         tools:targetApi="31">
         <activity
-            android:name=".login.LoginPageActivity"
+            android:name=".preference.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat">
             <intent-filter>
@@ -21,6 +21,16 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".login.LoginPageActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat">
+        </activity>
+        <activity
+            android:name=".qrscanning.DetailActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat">
         </activity>
     </application>
 
