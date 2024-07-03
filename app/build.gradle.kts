@@ -45,6 +45,11 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes.add("/META-INF/DEPENDENCIES")
+            excludes.add("/META-INF/LICENSE")
+            excludes.add("/META-INF/LICENSE.txt")
+            excludes.add("/META-INF/NOTICE")
+            excludes.add("/META-INF/NOTICE.txt")
         }
     }
 }
@@ -82,4 +87,11 @@ dependencies {
 
     //reports
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    //database
+    implementation("com.google.api-client:google-api-client-android:1.31.5")
+    implementation("com.google.api-client:google-api-client-gson:1.31.5")
+    implementation("com.google.apis:google-api-services-sheets:v4-rev581-1.25.0")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.11.0")
+    implementation("com.google.http-client:google-http-client-gson:1.39.2")
 }
