@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+#ignoring credentails
+app/src/main/res/raw/credentials.json
