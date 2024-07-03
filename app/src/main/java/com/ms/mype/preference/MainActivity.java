@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 showAddItemDialog();
             }
         });
+
     }
 
     private void showAddItemDialog() {
@@ -113,16 +115,18 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == RESULT_OK) {
             if (data != null) {
                 String qrCode = data.getStringExtra("SCAN_RESULT");
+                String optionSelected = data.getStringExtra("OPTION_SELECTED");
                 if (!TextUtils.isEmpty(qrCode)) {
                     // Check if the scanned QR code is a UPI QR code
                     if (qrCode.startsWith("upi://")) {
                         // It's a UPI QR code, handle it accordingly
                         // For example, start a UPI payment activity
-                        startUPIPaymentActivity(qrCode);
+                        startUPIPaymentActivity(qrCode,optionSelected);
                     } else {
                         // Start QRResultActivity to display the QR code result
                         Intent intent = new Intent(MainActivity.this, QRResultActivity.class);
                         intent.putExtra("SCAN_RESULT", qrCode);
+                        intent.putExtra("OPTION_SELECTED", optionSelected);
                         startActivity(intent);
                     }
                 }
@@ -130,13 +134,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void startUPIPaymentActivity(String upiQrData) {
+    private void startUPIPaymentActivity(String upiQrData,String optionSelected) {
         /*// Implement your UPI payment handling here
         // Example: Start an activity to handle UPI payment
         Toast.makeText(this, "UPI QR Code scanned: " + upiQrData, Toast.LENGTH_SHORT).show();
         // Replace this with actual UPI payment handling logic*/
         Intent intent = new Intent(MainActivity.this, AmountEntryActivity.class);
         intent.putExtra("UPI_QR_DATA", upiQrData);
+        intent.putExtra("OPTION_SELECTED", optionSelected);
         startActivity(intent);
     }
 

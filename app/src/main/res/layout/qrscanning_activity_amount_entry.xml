@@ -19,4 +19,13 @@
         android:layout_below="@id/editTextAmount"
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/buttonAlreadyPaid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Already Paid"
+        android:layout_below="@id/buttonPay"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

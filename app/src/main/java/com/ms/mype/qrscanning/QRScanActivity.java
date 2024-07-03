@@ -39,6 +39,7 @@ public class QRScanActivity extends AppCompatActivity {
             public void barcodeResult(BarcodeResult result) {
                 Intent resultIntent = new Intent();
                 //resultIntent.putExtra("SCAN_RESULT", itemText+" "+result.getText());
+                resultIntent.putExtra("OPTION_SELECTED", itemText);
                 resultIntent.putExtra("SCAN_RESULT", result.getText());
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
