@@ -14,5 +14,5 @@
 .cxx
 local.properties
 
-#ignoring credentails
+#ignoring credentails.json
 /app/src/main/res/raw/credentials.json
