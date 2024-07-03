@@ -1,7 +1,12 @@
 package com.ms.mype.reports;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +19,8 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ms.mype.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +41,28 @@ public class MainActivity extends AppCompatActivity {
         setupPieChart();
         loadPieChartData();
         setupRecyclerView();
+
+        //storing username and email id, if google login is introduced values should be updated here
+        SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("USERNAME", "Manojkumar Kallagunta");
+        editor.putString("EMAIL", "manojkumarkallagunta12@gmail.com");
+        editor.apply();
+
+        //Retrieving Data
+        /*SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("USERNAME", "");
+        String email = sharedPreferences.getString("EMAIL", "");*/
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Handle the FAB click event
+                Intent intent = new Intent(MainActivity.this, com.ms.mype.preference.MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setupPieChart() {
@@ -69,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
 
         pieChart.setData(data);
         pieChart.invalidate(); // refresh
+
+
     }
 
     private void setupRecyclerView() {

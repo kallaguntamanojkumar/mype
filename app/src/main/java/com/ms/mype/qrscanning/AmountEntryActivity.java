@@ -20,7 +20,9 @@ public class AmountEntryActivity extends AppCompatActivity {
 
     private EditText editTextAmount;
     private Button buttonPay;
+    private Button buttonAlreadyPay;
     private String upiQrData;
+    private String optionSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +31,32 @@ public class AmountEntryActivity extends AppCompatActivity {
 
         editTextAmount = findViewById(R.id.editTextAmount);
         buttonPay = findViewById(R.id.buttonPay);
+        buttonAlreadyPay = findViewById(R.id.buttonAlreadyPaid);
 
         // Get the UPI QR data from the intent
         upiQrData = getIntent().getStringExtra("UPI_QR_DATA");
+        optionSelected = getIntent().getStringExtra("OPTION_SELECTED");
+
+        String amount = editTextAmount.getText().toString().trim();
 
         buttonPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String amount = editTextAmount.getText().toString().trim();
                 if (!TextUtils.isEmpty(amount)) {
                     initiateUPIPayment(upiQrData, amount);
+                } else {
+                    Toast.makeText(AmountEntryActivity.this, "Please enter an amount", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        buttonAlreadyPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String amount = editTextAmount.getText().toString().trim();
+                if (!TextUtils.isEmpty(amount)) {
+                    Toast.makeText(AmountEntryActivity.this, "Transaction Added successfully." + optionSelected +" "+ amount, Toast.LENGTH_SHORT).show();
+                    // add database logic here, for thi we need item_selected and amount
                 } else {
                     Toast.makeText(AmountEntryActivity.this, "Please enter an amount", Toast.LENGTH_SHORT).show();
                 }
@@ -93,6 +111,7 @@ public class AmountEntryActivity extends AppCompatActivity {
 
         if (status.equals("success")) {
             Toast.makeText(this, "Transaction successful. Reference No: " + approvalRefNo, Toast.LENGTH_SHORT).show();
+            // add database logic here, for thi we need item_selected and amount
         } else if ("payment cancelled by user".equalsIgnoreCase(status)) {
             Toast.makeText(this, "Payment cancelled by user.", Toast.LENGTH_SHORT).show();
         } else {
