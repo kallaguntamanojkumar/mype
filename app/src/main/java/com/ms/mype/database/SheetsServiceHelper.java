@@ -1,13 +1,10 @@
 package com.ms.mype.database;
 
 import static android.content.ContentValues.TAG;
-
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
-
 import androidx.appcompat.app.AlertDialog;
-
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.sheets.v4.Sheets;
@@ -23,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import com.ms.mype.R;
 import com.ms.mype.reports.ChartData;
 
@@ -55,8 +51,7 @@ public class SheetsServiceHelper {
     public static Sheets getSheetsService() {
         return sheetsService;
     }
-
-
+  
     /*private void showLoadingDialog(long secs) {
         runOnUiThread(() -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -211,4 +206,3 @@ public class SheetsServiceHelper {
         return colLetter.toString();
     }
 }
-
