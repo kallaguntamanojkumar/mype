@@ -25,6 +25,9 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,6 +39,12 @@ import java.util.concurrent.FutureTask;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.AddSheetRequest;
+import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
+import com.google.api.services.sheets.v4.model.Request;
+import com.google.api.services.sheets.v4.model.Sheet;
+import com.google.api.services.sheets.v4.model.SheetProperties;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.ms.mype.R;
 import com.ms.mype.database.SheetsServiceHelper;
@@ -47,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private ChartDataAdapter adapter;
     private List<ChartData> chartDataList;
     private ProgressDialog progressDialog;
+    private Sheets sheetsService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,24 +66,6 @@ public class MainActivity extends AppCompatActivity {
         // Initialize SheetsServiceHelper
         SheetsServiceHelper.initialize(getApplicationContext());
 
-        /*// Example usage in a background thread or method
-        new Thread(() -> {
-            try {
-                Sheets sheets = SheetsServiceHelper.getSheetsService();
-                if (sheets != null) {
-                    // Perform operations using sheetsService
-                    // For example:
-                    Sheets.Spreadsheets spreadsheets = sheets.spreadsheets();
-                    // Further operations...
-                } else {
-                    Log.e("MainActivity", "sheetsService is null");
-                    // Handle null sheetsService case
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();*/
-
         pieChart = findViewById(R.id.pieChart);
         recyclerView = findViewById(R.id.recyclerView);
 
@@ -81,16 +73,25 @@ public class MainActivity extends AppCompatActivity {
         loadPieChartData();
         setupRecyclerView();
 
-        //storing username and email id, if google login is introduced values should be updated here
+        // Get the Login result from the intent
+        String userName = getIntent().getStringExtra("UserName");
+        String userEmail = getIntent().getStringExtra("UserEmail");
+
+        // Generate the sheet name using email and year
+        String sheetName = userEmail + "-"+ Year.now().getValue();
+
+        //storing userName and email id, if google login is introduced values should be updated here
         SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("USERNAME", "Manojkumar Kallagunta");
-        editor.putString("EMAIL", "manojkumarkallagunta12@gmail.com");
+
+        editor.putString("USERNAME", userName);
+        editor.putString("EMAIL", userEmail);
+        editor.putString("SHEETNAME", sheetName);
         editor.apply();
 
         //Retrieving Data
         /*SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
-        String username = sharedPreferences.getString("USERNAME", "");
+        String userName = sharedPreferences.getString("USERNAME", "");
         String email = sharedPreferences.getString("EMAIL", "");*/
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -102,6 +103,50 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+
+        // Initialize Sheets service
+        sheetsService = SheetsServiceHelper.getSheetsService();
+
+        // Check if the sheet exists, and create if it doesn't
+        new Thread(() -> {
+            try {
+                checkAndCreateSheet(sheetName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void checkAndCreateSheet(String sheetName) throws IOException {
+        Spreadsheet spreadsheet = sheetsService.spreadsheets().get(SPREADSHEET_ID).execute();
+        List<Sheet> sheets = spreadsheet.getSheets();
+
+        boolean sheetExists = false;
+        for (Sheet sheet : sheets) {
+            if (sheet.getProperties().getTitle().equals(sheetName)) {
+                sheetExists = true;
+                break;
+            }
+        }
+
+        if (!sheetExists) {
+            addSheet(sheetName);
+        }
+    }
+
+    private void addSheet(String sheetName) throws IOException {
+        List<Request> requests = new ArrayList<>();
+        requests.add(new Request()
+                .setAddSheet(new AddSheetRequest()
+                        .setProperties(new SheetProperties()
+                                .setTitle(sheetName))));
+
+        BatchUpdateSpreadsheetRequest body = new BatchUpdateSpreadsheetRequest().setRequests(requests);
+        sheetsService.spreadsheets().batchUpdate(SPREADSHEET_ID, body).execute();
+
+        Log.d("ReportsActivity", "Sheet " + sheetName + " created.");
     }
 
     private void setupPieChart() {
@@ -120,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
         showLoadingDialog();
 
-        FutureTask<List<ChartData>> futureTask = readDataFromSheets("August", "2024");
+        FutureTask<List<ChartData>> futureTask = readDataFromSheets(LocalDate.now().getMonth().toString(), String.valueOf(LocalDate.now().getYear()));
 
         new Thread(() -> {
             try {
@@ -241,8 +286,10 @@ public class MainActivity extends AppCompatActivity {
                 List<ChartData> chartDataList = new ArrayList<>();
                 try {
                     Sheets sheetsService = SheetsServiceHelper.getSheetsService();
+                    SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
+                    String sheetName = sharedPreferences.getString("SHEETNAME", "");
                     ValueRange response = sheetsService.spreadsheets().values()
-                            .get(SPREADSHEET_ID, "Sheet1!A:Z")
+                            .get(SPREADSHEET_ID, sheetName+"!A:Z")
                             .execute();
                     List<List<Object>> values = response.getValues();
                     if (values != null && !values.isEmpty()) {

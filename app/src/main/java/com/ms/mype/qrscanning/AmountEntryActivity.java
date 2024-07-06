@@ -4,7 +4,9 @@ import static android.content.ContentValues.TAG;
 
 import static com.ms.mype.constants.Constats.SPREADSHEET_ID;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,9 +27,12 @@ import com.ms.mype.R;
 import com.ms.mype.database.SheetsServiceHelper;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -150,7 +155,21 @@ public class AmountEntryActivity extends AppCompatActivity {
             add(Float.parseFloat(price));
         }});
 
-        writeDataToSheet("Sheet1","August","2024",test_data);
+        SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        String sheetName = sharedPreferences.getString("SHEETNAME", "");
+        writeDataToSheet(sheetName, getCurrentMonth(),getCurrentYear(),test_data);
+    }
+
+    public String getCurrentMonth() {
+        LocalDate currentDate = LocalDate.now();
+        String month = currentDate.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+        return month;
+    }
+
+    public String getCurrentYear() {
+        LocalDate currentDate = LocalDate.now();
+        int year = currentDate.getYear();
+        return String.valueOf(year);
     }
 
     private void writeDataToSheet(String sheetName, String month, String year, List<List<Object>> data) {

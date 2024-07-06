@@ -94,4 +94,8 @@ dependencies {
     implementation("com.google.apis:google-api-services-sheets:v4-rev581-1.25.0")
     implementation("com.google.auth:google-auth-library-oauth2-http:1.11.0")
     implementation("com.google.http-client:google-http-client-gson:1.39.2")
+
+    //sso login
+    implementation("com.google.android.gms:play-services-auth:20.5.0")
+
 }
