@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">mype</string>
     <string name="default_web_client_id">970168277030-67dudsjinuk1pp3kv5mpovn684bihon5.apps.googleusercontent.com</string>
+    <string name="SPREADSHEET_ID">1gKMEWRBh3jeyqHesXWTBiM7-yfHaJpZF7JDEcTKj9BU</string>
 </resources>

@@ -45,5 +45,9 @@ public class ChartDataAdapter extends RecyclerView.Adapter<ChartDataAdapter.View
             valueTextView = view.findViewById(R.id.valueTextView);
         }
     }
+    public void updateData(List<ChartData> newChartDataList) {
+        this.chartDataList = newChartDataList;
+        notifyDataSetChanged();
+    }
 }
 
