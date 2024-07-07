@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter amount"
+        android:textSize="28sp"
         android:inputType="numberDecimal" />
 
     <Button
@@ -17,6 +18,11 @@
         android:layout_height="wrap_content"
         android:text="Pay"
         android:layout_below="@id/editTextAmount"
+        android:textColor="@android:color/black"
+        android:background="@drawable/preference_custom_button"
+        android:drawablePadding="8dp"
+        android:padding="16dp"
+        android:elevation="8dp"
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true" />
 
@@ -26,6 +32,11 @@
         android:layout_height="wrap_content"
         android:text="Already Paid"
         android:layout_below="@id/buttonPay"
+        android:textColor="@android:color/black"
+        android:background="@drawable/preference_custom_button"
+        android:drawablePadding="8dp"
+        android:padding="16dp"
+        android:elevation="8dp"
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
