@@ -1,4 +1,5 @@
 package com.ms.mype.reports;
+
 import static android.content.ContentValues.TAG;
 
 import static com.ms.mype.constants.Constats.SPREADSHEET_ID;
@@ -22,6 +23,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         String userEmail = getIntent().getStringExtra("UserEmail");
 
         // Generate the sheet name using email and year
-        String sheetName = userEmail + "-"+ Year.now().getValue();
+        String sheetName = userEmail + "-" + Year.now().getValue();
 
         //storing userName and email id, if google login is introduced values should be updated here
         SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
@@ -113,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         // Initialize Sheets service
         sheetsService = SheetsServiceHelper.getSheetsService();
 
@@ -121,8 +123,11 @@ public class MainActivity extends AppCompatActivity {
         new Thread(() -> {
             try {
                 checkAndCreateSheet(sheetName);
+                runOnUiThread(this::loadPieChartData);
             } catch (IOException e) {
                 e.printStackTrace();
+                runOnUiThread(this::dismissLoadingDialog);
+                runOnUiThread(() -> showAlert("Error", "Failed to initialize the sheet."));
             }
         }).start();
 
@@ -133,6 +138,15 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+
+    private void showAlert(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
     }
 
     //signout logic
@@ -207,7 +221,8 @@ public class MainActivity extends AppCompatActivity {
         pieChart.setDragDecelerationFrictionCoef(0.95f);
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleColor(Color.WHITE);
-        pieChart.setTransparentCircleRadius(61f);
+        pieChart.setHoleRadius(20f);
+        pieChart.setTransparentCircleRadius(30f);
     }
 
     private void loadPieChartData() {
@@ -311,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
 
             // Dismiss the dialog after 2 seconds
-            new Handler().postDelayed(dialog::dismiss, 1000*secs);
+            new Handler().postDelayed(dialog::dismiss, 1000 * secs);
         });
     }
 
@@ -340,28 +355,28 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferences sharedPreferences = getSharedPreferences("UserData", Context.MODE_PRIVATE);
                     String sheetName = sharedPreferences.getString("SHEETNAME", "");
                     ValueRange response = sheetsService.spreadsheets().values()
-                            .get(SPREADSHEET_ID, sheetName+"!A:Z")
+                            .get(SPREADSHEET_ID, sheetName + "!A:Z")
                             .execute();
                     List<List<Object>> values = response.getValues();
                     if (values != null && !values.isEmpty()) {
                         int colIndex = -1;
-                        for (int i = 0; i < values.get(0).size(); i+=2) {
-                            Log.d("reports/MainActivity.java", "Index: "+i);
+                        for (int i = 0; i < values.get(0).size(); i += 2) {
+                            Log.d("reports/MainActivity.java", "Index: " + i);
                             if (values.get(0).get(i).toString().equalsIgnoreCase(month) && values.get(0).get(i + 1).toString().equalsIgnoreCase(year)) {
                                 colIndex = i;
-                                Log.d("reports/MainActivity.java", "Matched colIndex: "+colIndex);
+                                Log.d("reports/MainActivity.java", "Matched colIndex: " + colIndex);
                                 break;
                             }
                         }
 
                         if (colIndex != -1) {
                             // Column found, read the entire column
-                            Log.d("reports/MainActivity.java", "readDataFromSheets: "+values);
+                            Log.d("reports/MainActivity.java", "readDataFromSheets: " + values);
                             for (int i = 1; i < values.size(); i++) {
                                 if (i < values.size() && colIndex < values.get(i).size()) {
                                     String item = values.get(i).get(colIndex).toString();
                                     String price = values.get(i).get(colIndex + 1).toString();
-                                    Log.d("reports/MainActivity.java", "filtereddata: "+item+Float.parseFloat(price));
+                                    Log.d("reports/MainActivity.java", "filtereddata: " + item + Float.parseFloat(price));
                                     // Skip empty strings
                                     if (!item.isEmpty() && !price.isEmpty()) {
                                         try {
@@ -427,9 +442,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-
             for (int i = 0; i < values.get(0).size(); i += 2) {
-                if (values.get(0).get(i).toString().equalsIgnoreCase(month) && values.get(0).get(i+1).toString().equalsIgnoreCase(year)) {
+                if (values.get(0).get(i).toString().equalsIgnoreCase(month) && values.get(0).get(i + 1).toString().equalsIgnoreCase(year)) {
                     colIndex = i;
                     break;
                 }
